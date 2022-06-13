@@ -103,6 +103,17 @@ app.put('/drinks/:id', (req, res) => {
   res.status(204).end();
 })
 
+app.delete('/drinks/:id', (req, res) => {
+  const { id } = req.params;
+  const drinkIndex = drinks.findIndex((d) => d.id === Number(id));
+
+  if (drinkIndex === -1) return res.status(404).json({ message: 'Recipe not found!' });
+
+  drinks.splice(drinkIndex, 1);
+
+  res.status(204).end();
+})
+
 app.delete('/recipes/:id', (req, res) => {
   const { id } = req.params;
   const recipeIndex = recipes.findIndex((r) => r.id === Number(id));
