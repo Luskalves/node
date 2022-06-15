@@ -1,9 +1,26 @@
 const express = require('express');
-const app = express();
-const cors = require('cors');
 const bodyParser = require('body-parser');
+const authMiddleware = require('./auth-middleware');
 
+
+const app = express();
 app.use(bodyParser.json());
+
+app.get('/open', function (req, res) {
+  res.send('open!')
+});
+
+app.use(authMiddleware);
+
+app.use((req, _res, next) => {
+  console.log('req.method:', req.method);
+  console.log('req.path:', req.path);
+  console.log('req.params:', req.params);
+  console.log('req.query:', req.query);
+  console.log('req.headers:', req.headers);
+  console.log('req.body:', req.body);
+  next();
+});
 
 const recipes = [
   { id: 1, name: 'Lasanha', price: 40.0, waitTime: 30 },
@@ -19,6 +36,13 @@ const drinks = [
 	{ id: 5, name: 'Cerveja Lata', price: 4.5 },
 	{ id: 6, name: 'Água Mineral 500 ml', price: 5.0 },
 ];
+
+function validateName(req, res, next) {
+	const { name } = req.body;
+	if (!name || name === '') return res.status(400).json({ message: 'Invalid data!'});
+
+	next();
+};
 
 app.get('/recipes', (_req, res) => {
   res.json(recipes.sort((a,b) => a.name.localeCompare(b.name)))
@@ -59,9 +83,10 @@ app.get('/drinks/:id', (req, res) => {
   res.status(200).json(drink)
 })
 
-app.post('/recipes', function (req, res) {
-  const { id, name, price, waitTime } = req.body;
-  recipes.push({ id, name, price , waitTime});
+app.post('/recipes', validateName, function (req, res) {
+  const { id, name, price } = req.body;
+  const { username } = req.user;
+  recipes.push({ id, name, price, chef: username });
   res.status(201).json({ message: 'Recipe created successfully!'});
 })
 
