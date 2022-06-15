@@ -52,3 +52,16 @@ router.put('/:id', validateNames, (req, res) => {
 
   res.status(204).end();
 })
+
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+  const recipeIndex = recipes.findIndex((r) => r.id === Number(id));
+
+  if (recipeIndex === -1) return res.status(500).json({ message: 'Recipe not found!' });
+
+  recipes.splice(recipeIndex, 1);
+
+  res.status().end();
+})
+
+module.exports = router;
