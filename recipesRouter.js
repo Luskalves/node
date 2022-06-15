@@ -61,7 +61,7 @@ router.delete('/:id', (req, res) => {
 
   recipes.splice(recipeIndex, 1);
 
-  res.status().end();
+  res.status(204).end();
 })
 
 module.exports = router;
