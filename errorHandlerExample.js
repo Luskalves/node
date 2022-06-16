@@ -15,3 +15,7 @@ app.get('/:filename', async (req, res, next) => {
 app.use(function (err, _req, res, _next) {
   res.status(500).json({ error: `ERROR: ${err.message}` })
 });
+
+app.listen(3002, () => {
+  console.log('ouvindo na porta 3002');
+});
